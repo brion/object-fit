@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>object-fit test</title>
+    <style>
+      .fit {
+        /* Make the shape of the container visible */
+        border: solid 1px purple;
+        background-color: lavender;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>object-fit test</h1>
+
+    <div>
+      <b>Adjust container aspect ratio:</b>
+      <label><input name=aspect-setting value=420 type=radio> 21:9</label>
+      <label><input name=aspect-setting value=320 type=radio checked> 16:9</label>
+      <label><input name=aspect-setting value=240 type=radio> 4:3</label>
+      <label><input name=aspect-setting value=180 type=radio> 1:1</label>
+    </div>
+
+    <div>
+      <b>Adjust object-fit:</b>
+      <label><input name=fit-setting type=radio value=fill> fill</label>
+      <label><input name=fit-setting type=radio value=contain checked> contain</label>
+      <label><input name=fit-setting type=radio value=cover> cover</label>
+      <label><input name=fit-setting type=radio value=scale-down> scale-down</label>
+      <label><input name=fit-setting type=radio value=none> none</label>
+    </div>
+
+    <h2>img</h2>
+    <div>
+      <img class=fit width=320 height=180 src=image.gif>
+    </div>
+
+    <h2>video</h2>
+    <div>
+      <video class=fit width=320 height=180 muted autoplay loop>
+        <source src=video.mp4 type="video/mp4">
+        <source src=video.webm type="video/webm">
+      </video>
+    </div>
+
+    <h2>canvas</h2>
+    <div>
+      <canvas class=fit width=320 height=180></canvas>
+    </div>
+
+    <p>
+      Video by
+      <a href="https://commons.wikimedia.org/wiki/File:Jellyfish_at_the_Aquarium_of_Genoa.ogv">
+        Superchilum at Wikimedia Commons
+      </a>, under <a href="https://creativecommons.org/licenses/by-sa/4.0/deed.en">
+        CC-BY 4.0 International license
+      </a>.
+    </p>
+
+    <script>
+      function apply(selector, callback) {
+        var nodeList = document.querySelectorAll(selector),
+          i,
+          node;
+        for (var i = 0; i < nodeList.length; i++) {
+          node = nodeList[i];
+          callback.apply(node);
+        }
+      }
+
+      function changeFitSize(width) {
+        apply('.fit', function() {
+          this.style.width = width + 'px';
+          this.style.height = '180px';
+        });
+      }
+
+      function changeFitSetting(val) {
+        apply('.fit', function() {
+          this.style.objectFit = val;
+        });
+      }
+
+      apply('input[name=aspect-setting]', function() {
+        this.addEventListener('click', function() {
+          changeFitSize(parseInt(this.value), 180);
+        });
+      });
+
+      apply('input[name=fit-setting]', function() {
+        this.addEventListener('click', function() {
+          changeFitSetting(this.value);
+        });
+      });
+
+      // defaults
+      changeFitSize(320, 180);
+      changeFitSetting('contain');
+
+      function updateCanvas() {
+        var video = document.querySelector('video'),
+          canvas = document.querySelector('canvas'),
+          context = canvas.getContext('2d');
+        context.drawImage(video, 0, 0);
+      }
+      setInterval(updateCanvas, 1000 / 5);
+    </script>
+  </body>
+</html>
